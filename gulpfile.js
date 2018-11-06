@@ -1,4 +1,5 @@
 const gulp = require('gulp');
+const sass = require('gulp-sass');
 const autoprefixer = require('gulp-autoprefixer');
 const clean = require('gulp-clean');
 const concat = require('gulp-concat');
@@ -10,6 +11,7 @@ const htmlBlob = 'src/*.html';
 const imagesBlob = 'src/images/**';
 const fontsBlob = 'src/fonts/**';
 const stylesBlob = 'src/css/**';
+const sassBlob = 'src/sass/*.sass';
 
 gulp.task('default', function () {
   return runSequence('build', 'serve');
@@ -44,6 +46,9 @@ gulp.task('serve', function () {
   gulp.watch(stylesBlob, function () {
     return runSequence('processStyles', 'reloadBrowser');
   });
+  gulp.watch(sassBlob, function () {
+    return runSequence('sass', 'reloadBrowser');
+  });
 });
 
 gulp.task('cleanDist', function () {
@@ -74,7 +79,21 @@ gulp.task('processStyles', function () {
     .pipe(gulp.dest(`${distDirectory}/css`));
 });
 
+
+
+gulp.task('sass', function() {
+  return  gulp.src(sassBlob)
+    .pipe(sass())
+    .pipe(gulp.dest('dist/css/'));
+});
+
+
+gulp.task('sass:watch', function () {
+  gulp.watch(sassBlob, ['sass']);
+});
+
 gulp.task('reloadBrowser', function (done) {
   browserSync.reload();
   done();
 });
+ 
